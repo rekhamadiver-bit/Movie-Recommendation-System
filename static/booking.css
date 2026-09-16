@@ -1,0 +1,536 @@
+/* =========================================
+   MOVIEAI - BOOKING PAGE
+   ========================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #080d1c;
+    color: white;
+}
+
+
+/* =========================================
+   HEADER
+   ========================================= */
+
+.booking-header {
+    background: linear-gradient(135deg, #11182d, #182449);
+    padding: 25px 5%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.4);
+}
+
+.booking-logo {
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.booking-logo span {
+    color: #ff4757;
+}
+
+.header-links {
+    display: flex;
+    gap: 12px;
+}
+
+.header-links a {
+    color: white;
+    text-decoration: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    background: #3742fa;
+    transition: 0.3s;
+}
+
+.header-links a:hover {
+    transform: translateY(-2px);
+    background: #5352ed;
+}
+
+
+/* =========================================
+   MAIN CONTAINER
+   ========================================= */
+
+.booking-container {
+    width: 92%;
+    max-width: 1200px;
+    margin: 40px auto;
+}
+
+
+/* =========================================
+   MOVIE INFORMATION
+   ========================================= */
+
+.movie-banner {
+    background: linear-gradient(
+        135deg,
+        #151d35,
+        #202a4a
+    );
+
+    border-radius: 20px;
+    padding: 30px;
+
+    margin-bottom: 30px;
+
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.35);
+}
+
+.movie-banner h1 {
+    margin-top: 0;
+    font-size: 36px;
+}
+
+.movie-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.movie-meta span {
+    background: #0e1528;
+    padding: 9px 15px;
+    border-radius: 20px;
+    color: #ddd;
+}
+
+.rating {
+    color: #ffd32a !important;
+}
+
+
+/* =========================================
+   BOOKING GRID
+   ========================================= */
+
+.booking-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.3fr;
+    gap: 30px;
+}
+
+
+/* =========================================
+   BOOKING CARD
+   ========================================= */
+
+.booking-card {
+    background: #151d35;
+    border-radius: 18px;
+    padding: 25px;
+
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+}
+
+.booking-card h2 {
+    margin-top: 0;
+    font-size: 24px;
+}
+
+
+/* =========================================
+   FORM
+   ========================================= */
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #ddd;
+}
+
+.form-group select,
+.form-group input {
+    width: 100%;
+    padding: 13px;
+
+    border: 1px solid #303b5d;
+    border-radius: 9px;
+
+    background: #0e1528;
+    color: white;
+
+    font-size: 15px;
+    outline: none;
+}
+
+.form-group select:focus,
+.form-group input:focus {
+    border-color: #5352ed;
+}
+
+
+/* =========================================
+   SHOW TIME
+   ========================================= */
+
+.show-times {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.time-btn {
+    padding: 13px;
+
+    border: 1px solid #3742fa;
+    border-radius: 9px;
+
+    background: #0e1528;
+    color: white;
+
+    cursor: pointer;
+
+    font-size: 14px;
+
+    transition: 0.3s;
+}
+
+.time-btn:hover {
+    background: #3742fa;
+}
+
+.time-btn.active {
+    background: #ff4757;
+    border-color: #ff4757;
+}
+
+
+/* =========================================
+   SEAT SECTION
+   ========================================= */
+
+.seat-availability {
+    text-align: center;
+    padding: 15px;
+    margin: 20px 0;
+    background: #0e1528;
+    color: white;
+    border: 1px solid #303b5d;
+    border-radius: 10px;
+    font-size: 17px;
+    font-weight: bold;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.screen {
+    text-align: center;
+
+    margin: 10px auto 30px;
+
+    padding: 10px;
+
+    width: 80%;
+
+    background: #ddd;
+    color: #111;
+
+    border-radius: 50%;
+
+    box-shadow: 0 0 20px rgba(255,255,255,0.3);
+}
+
+.screen-text {
+    font-size: 13px;
+    font-weight: bold;
+}
+
+
+/* =========================================
+   SEAT GRID
+   ========================================= */
+
+.seat-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.seat-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.row-label {
+    width: 25px;
+    color: #aaa;
+    font-weight: bold;
+}
+
+.seat {
+    width: 38px;
+    height: 38px;
+
+    border-radius: 8px;
+
+    border: none;
+
+    background: #2ed573;
+
+    color: white;
+
+    cursor: pointer;
+
+    font-size: 12px;
+    font-weight: bold;
+
+    transition: 0.2s;
+}
+
+.seat:hover {
+    transform: scale(1.1);
+}
+
+.seat.selected {
+    background: #ff4757;
+}
+
+.seat.booked {
+    background: #555;
+    cursor: not-allowed;
+}
+
+/* =========================================
+   SEAT LEGEND
+   ========================================= */
+
+.seat-legend {
+    display: flex;
+    justify-content: center;
+
+    gap: 25px;
+
+    margin-top: 25px;
+
+    flex-wrap: wrap;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+
+    color: #aaa;
+    font-size: 13px;
+}
+
+.legend-box {
+    width: 18px;
+    height: 18px;
+    border-radius: 4px;
+}
+
+.available {
+    background: #2ed573;
+}
+
+.selected-box {
+    background: #ff4757;
+}
+
+.booked-box {
+    background: #555;
+}
+
+
+/* =========================================
+   SUMMARY
+   ========================================= */
+
+.booking-summary {
+    margin-top: 30px;
+
+    background: #0e1528;
+
+    padding: 20px;
+
+    border-radius: 12px;
+}
+
+.summary-row {
+    display: flex;
+    justify-content: space-between;
+
+    padding: 10px 0;
+
+    border-bottom: 1px solid #29334f;
+}
+
+.summary-row:last-child {
+    border-bottom: none;
+}
+
+.total-row {
+    font-size: 23px;
+    font-weight: bold;
+
+    color: #ff4757;
+}
+
+
+/* =========================================
+   BOOK BUTTON
+   ========================================= */
+
+.book-button {
+    width: 100%;
+
+    margin-top: 20px;
+
+    padding: 16px;
+
+    border: none;
+
+    border-radius: 10px;
+
+    background: linear-gradient(
+        135deg,
+        #ff4757,
+        #ff6b81
+    );
+
+    color: white;
+
+    font-size: 18px;
+
+    font-weight: bold;
+
+    cursor: pointer;
+
+    transition: 0.3s;
+}
+
+.book-button:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 10px 25px rgba(255, 71, 87, 0.3);
+}
+
+.book-button:disabled {
+    background: #555;
+    cursor: not-allowed;
+    transform: none;
+}
+
+
+/* =========================================
+   MESSAGE
+   ========================================= */
+
+.message {
+    display: none;
+
+    margin-top: 15px;
+
+    padding: 12px;
+
+    border-radius: 8px;
+
+    text-align: center;
+
+    font-weight: bold;
+}
+
+.message.error {
+    display: block;
+
+    background: #7d1f2a;
+}
+
+.message.success {
+    display: block;
+
+    background: #1e7e34;
+}
+
+
+/* =========================================
+   RESPONSIVE
+   ========================================= */
+
+@media (max-width: 900px) {
+
+    .booking-grid {
+        grid-template-columns: 1fr;
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .booking-header {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+
+    .movie-banner h1 {
+        font-size: 28px;
+    }
+
+    .booking-container {
+        width: 95%;
+    }
+
+    .seat {
+        width: 30px;
+        height: 30px;
+        font-size: 10px;
+    }
+
+    .seat-row {
+        gap: 5px;
+    }
+
+    .show-times {
+        grid-template-columns: 1fr;
+    }
+
+    .header-links {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+}
+
+
+/* =========================================
+   ANIMATION
+   ========================================= */
+
+@keyframes fadeIn {
+
+    from {
+        opacity: 0;
+        transform: translateY(15px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+}
+
+.booking-card,
+.movie-banner {
+    animation: fadeIn 0.5s ease;
+}

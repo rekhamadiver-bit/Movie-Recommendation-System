@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Admin Dashboard - MovieAI</title>
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            background: #0b1020;
+            color: white;
+        }
+
+        /* =========================
+           HEADER
+        ========================== */
+
+        header {
+            background: #11182d;
+            padding: 20px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            border-bottom: 1px solid #26304d;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 26px;
+        }
+
+        header a {
+            color: white;
+            text-decoration: none;
+            background: #3742fa;
+            padding: 11px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        header a:hover {
+            background: #535cff;
+            transform: translateY(-2px);
+        }
+
+        /* =========================
+           MAIN CONTAINER
+        ========================== */
+
+        .container {
+            width: 90%;
+            max-width: 1250px;
+            margin: 40px auto;
+        }
+
+        /* =========================
+           PAGE TITLE
+        ========================== */
+
+        .dashboard-title {
+            margin-bottom: 25px;
+        }
+
+        .dashboard-title h2 {
+            margin: 0 0 8px;
+            font-size: 28px;
+        }
+
+        .dashboard-title p {
+            margin: 0;
+            color: #aaa;
+        }
+
+        /* =========================
+           STATISTICS
+        ========================== */
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .stat {
+            background: #151d35;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            border: 1px solid #26304d;
+            transition: 0.3s;
+        }
+
+        .stat:hover {
+            transform: translateY(-5px);
+            border-color: #3742fa;
+        }
+
+        .stat-icon {
+            font-size: 38px;
+            margin-bottom: 8px;
+        }
+
+        .stat-number {
+            font-size: 30px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .stat-title {
+            color: #aaa;
+            font-size: 15px;
+        }
+
+        /* =========================
+           SECTIONS
+        ========================== */
+
+        .section {
+            margin-top: 40px;
+            background: #151d35;
+            padding: 28px;
+            border-radius: 15px;
+            border: 1px solid #26304d;
+        }
+
+        .section h2 {
+            margin-top: 0;
+            margin-bottom: 22px;
+            font-size: 22px;
+        }
+
+        /* =========================
+           ADD MOVIE FORM
+        ========================== */
+
+        .movie-form {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #26304d;
+            border-radius: 8px;
+            background: #0e1528;
+            color: white;
+            font-size: 15px;
+            outline: none;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: #3742fa;
+        }
+
+        input::placeholder,
+        textarea::placeholder {
+            color: #777;
+        }
+
+        textarea {
+            min-height: 110px;
+            resize: vertical;
+        }
+
+        .full {
+            grid-column: 1 / -1;
+        }
+
+        /* =========================
+           BUTTON
+        ========================== */
+
+        button {
+            padding: 13px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            background: #3742fa;
+            color: white;
+            font-weight: bold;
+            font-size: 15px;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #535cff;
+            transform: translateY(-2px);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* =========================
+           SUCCESS MESSAGE
+        ========================== */
+
+        .success {
+            background: #1e7e34;
+            padding: 13px;
+            border-radius: 8px;
+            display: none;
+            margin-bottom: 18px;
+        }
+
+        .error {
+            background: #b02a37;
+            padding: 13px;
+            border-radius: 8px;
+            display: none;
+            margin-bottom: 18px;
+        }
+
+        /* =========================
+           BOOKINGS TABLE
+        ========================== */
+
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 850px;
+        }
+
+        th,
+        td {
+            padding: 14px;
+            border-bottom: 1px solid #2d3650;
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        th {
+            color: #aaa;
+            font-size: 14px;
+            background: #11182d;
+        }
+
+        td {
+            font-size: 14px;
+        }
+
+        tbody tr:hover {
+            background: #1b2542;
+        }
+
+        .booking-code {
+            color: #6c7cff;
+            font-weight: bold;
+        }
+
+        .total-price {
+            color: #2ed573;
+            font-weight: bold;
+        }
+
+        /* =========================
+           EMPTY BOOKINGS
+        ========================== */
+
+        .empty {
+            text-align: center;
+            padding: 30px;
+            color: #aaa;
+        }
+
+        .empty-icon {
+            font-size: 45px;
+            margin-bottom: 10px;
+        }
+
+        /* =========================
+           LOADING
+        ========================== */
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #aaa;
+        }
+
+        /* =========================
+           RESPONSIVE
+        ========================== */
+
+        @media(max-width: 1000px) {
+
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+        }
+
+        @media(max-width: 700px) {
+
+            header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            header h1 {
+                font-size: 22px;
+            }
+
+            .container {
+                width: 94%;
+                margin: 25px auto;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .movie-form {
+                grid-template-columns: 1fr;
+            }
+
+            .full {
+                grid-column: auto;
+            }
+
+            .section {
+                padding: 20px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =====================================================
+     HEADER
+====================================================== -->
+
+<header>
+
+    <h1>
+        📊 MovieAI Admin Dashboard
+    </h1>
+
+    <a href="{{ url_for('home') }}">
+        🏠 Home
+    </a>
+
+</header>
+
+
+<!-- =====================================================
+     MAIN CONTAINER
+====================================================== -->
+
+<div class="container">
+
+
+    <!-- =================================================
+         DASHBOARD TITLE
+    ================================================== -->
+
+    <div class="dashboard-title">
+
+        <h2>
+            Welcome, Admin 👋
+        </h2>
+
+        <p>
+            Manage movies, bookings and view sales information.
+        </p>
+
+    </div>
+
+
+    <!-- =================================================
+         STATISTICS
+    ================================================== -->
+
+    <div class="stats">
+
+
+        <!-- TOTAL MOVIES -->
+
+        <div class="stat">
+
+            <div class="stat-icon">
+                🎬
+            </div>
+
+            <div class="stat-number">
+                {{ movie_count }}
+            </div>
+
+            <div class="stat-title">
+                Total Movies
+            </div>
+
+        </div>
+
+
+        <!-- TOTAL BOOKINGS -->
+
+        <div class="stat">
+
+            <div class="stat-icon">
+                🎟️
+            </div>
+
+            <div class="stat-number">
+                {{ booking_count }}
+            </div>
+
+            <div class="stat-title">
+                Total Bookings
+            </div>
+
+        </div>
+
+
+        <!-- TOTAL USERS -->
+
+        <div class="stat">
+
+            <div class="stat-icon">
+                👥
+            </div>
+
+            <div class="stat-number">
+                {{ user_count }}
+            </div>
+
+            <div class="stat-title">
+                Users
+            </div>
+
+        </div>
+
+
+        <!-- TOTAL SALES -->
+
+        <div class="stat">
+
+            <div class="stat-icon">
+                💰
+            </div>
+
+            <div class="stat-number">
+
+                ₹{{ "%.0f"|format(total_sales) }}
+
+            </div>
+
+            <div class="stat-title">
+                Total Sales
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+    <!-- =================================================
+         ADD NEW MOVIE
+    ================================================== -->
+
+    <div class="section">
+
+        <h2>
+            ➕ Add New Movie
+        </h2>
+
+
+        <!-- SUCCESS MESSAGE -->
+
+        <div id="message"
+             class="success">
+        </div>
+
+
+        <!-- ERROR MESSAGE -->
+
+        <div id="errorMessage"
+             class="error">
+        </div>
+
+
+        <div class="movie-form">
+
+
+            <!-- MOVIE NAME -->
+
+            <input
+                id="movieName"
+                type="text"
+                placeholder="Movie Name"
+            >
+
+
+            <!-- GENRE -->
+
+            <input
+                id="movieGenre"
+                type="text"
+                placeholder="Genre"
+            >
+
+
+            <!-- LANGUAGE -->
+
+            <select id="movieLanguage">
+
+                <option value="">
+                    Select Language
+                </option>
+
+                <option value="Kannada">
+                    Kannada
+                </option>
+
+                <option value="Hindi">
+                    Hindi
+                </option>
+
+                <option value="English">
+                    English
+                </option>
+
+            </select>
+
+
+            <!-- RATING -->
+
+            <input
+                id="movieRating"
+                type="number"
+                min="0"
+                max="10"
+                step="0.1"
+                placeholder="Rating (0 - 10)"
+            >
+
+
+            <!-- DESCRIPTION -->
+
+            <textarea
+                id="movieDescription"
+                class="full"
+                placeholder="Movie Description"
+            ></textarea>
+
+
+            <!-- ADD BUTTON -->
+
+            <button
+                id="addMovieButton"
+                class="full"
+                onclick="addMovie()"
+            >
+
+                ➕ Add Movie
+
+            </button>
+
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         RECENT BOOKINGS
+    ================================================== -->
+
+    <div class="section">
+
+        <h2>
+            🎟️ Recent Bookings
+        </h2>
+
+
+        {% if bookings %}
+
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+
+                <tr>
+
+                    <th>
+                        Booking
+                    </th>
+
+                    <th>
+                        User
+                    </th>
+
+                    <th>
+                        Movie
+                    </th>
+
+                    <th>
+                        Theatre
+                    </th>
+
+                    <th>
+                        Date
+                    </th>
+
+                    <th>
+                        Show Time
+                    </th>
+
+                    <th>
+                        Seats
+                    </th>
+
+                    <th>
+                        Quantity
+                    </th>
+
+                    <th>
+                        Total
+                    </th>
+
+                </tr>
+
+                </thead>
+
+
+                <tbody>
+
+
+                {% for booking in bookings %}
+
+
+                <tr>
+
+
+                    <!-- BOOKING CODE -->
+
+                    <td class="booking-code">
+
+                        {{ booking.booking_code }}
+
+                    </td>
+
+
+                    <!-- USER -->
+
+                    <td>
+
+                        {{ booking.username }}
+
+                    </td>
+
+
+                    <!-- MOVIE -->
+
+                    <td>
+
+                        {{ booking.movie_name }}
+
+                    </td>
+
+
+                    <!-- THEATRE -->
+
+                    <td>
+
+                        {{ booking.theatre }}
+
+                    </td>
+
+
+                    <!-- DATE -->
+
+                    <td>
+
+                        {{ booking.booking_date }}
+
+                    </td>
+
+
+                    <!-- SHOW TIME -->
+
+                    <td>
+
+                        {{ booking.show_time }}
+
+                    </td>
+
+
+                    <!-- SEATS -->
+
+                    <td>
+
+                        {{ booking.seats }}
+
+                    </td>
+
+
+                    <!-- QUANTITY -->
+
+                    <td>
+
+                        {{ booking.quantity }}
+
+                    </td>
+
+
+                    <!-- TOTAL -->
+
+                    <td class="total-price">
+
+                        ₹{{ "%.0f"|format(booking.total or 0) }}
+
+                    </td>
+
+
+                </tr>
+
+
+                {% endfor %}
+
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        {% else %}
+
+
+        <div class="empty">
+
+            <div class="empty-icon">
+                🎟️
+            </div>
+
+            <p>
+                No bookings available.
+            </p>
+
+        </div>
+
+
+        {% endif %}
+
+
+    </div>
+
+
+</div>
+
+
+<!-- =====================================================
+     JAVASCRIPT
+====================================================== -->
+
+<script>
+
+
+async function addMovie() {
+
+
+    /* -----------------------------------------------
+       GET FORM VALUES
+    ------------------------------------------------ */
+
+    const name =
+        document
+            .getElementById("movieName")
+            .value
+            .trim();
+
+
+    const genre =
+        document
+            .getElementById("movieGenre")
+            .value
+            .trim();
+
+
+    const language =
+        document
+            .getElementById("movieLanguage")
+            .value;
+
+
+    const rating =
+        document
+            .getElementById("movieRating")
+            .value;
+
+
+    const description =
+        document
+            .getElementById("movieDescription")
+            .value
+            .trim();
+
+
+    /* -----------------------------------------------
+       MESSAGE ELEMENTS
+    ------------------------------------------------ */
+
+    const message =
+        document.getElementById("message");
+
+
+    const errorMessage =
+        document.getElementById("errorMessage");
+
+
+    const button =
+        document.getElementById("addMovieButton");
+
+
+    /* -----------------------------------------------
+       HIDE OLD MESSAGES
+    ------------------------------------------------ */
+
+    message.style.display = "none";
+
+    errorMessage.style.display = "none";
+
+
+    /* -----------------------------------------------
+       VALIDATION
+    ------------------------------------------------ */
+
+    if (
+        !name ||
+        !genre ||
+        !language ||
+        !rating ||
+        !description
+    ) {
+
+        errorMessage.innerText =
+            "⚠️ Please fill all fields.";
+
+        errorMessage.style.display =
+            "block";
+
+        return;
+
+    }
+
+
+    /* -----------------------------------------------
+       RATING VALIDATION
+    ------------------------------------------------ */
+
+    const ratingNumber =
+        parseFloat(rating);
+
+
+    if (
+        isNaN(ratingNumber) ||
+        ratingNumber < 0 ||
+        ratingNumber > 10
+    ) {
+
+        errorMessage.innerText =
+            "⚠️ Rating must be between 0 and 10.";
+
+        errorMessage.style.display =
+            "block";
+
+        return;
+
+    }
+
+
+    /* -----------------------------------------------
+       DISABLE BUTTON
+    ------------------------------------------------ */
+
+    button.disabled = true;
+
+    button.innerText =
+        "⏳ Adding Movie...";
+
+
+    try {
+
+
+        /* -------------------------------------------
+           SEND DATA TO FLASK
+        -------------------------------------------- */
+
+        const response =
+            await fetch(
+                "/api/add",
+                {
+
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+
+                        name: name,
+
+                        genre: genre,
+
+                        language: language,
+
+                        rating: ratingNumber,
+
+                        description: description
+
+                    })
+
+                }
+            );
+
+
+        /* -------------------------------------------
+           GET SERVER RESPONSE
+        -------------------------------------------- */
+
+        const data =
+            await response.json();
+
+
+        /* -------------------------------------------
+           SUCCESS
+        -------------------------------------------- */
+
+        if (
+            response.ok &&
+            data.success
+        ) {
+
+
+            message.innerText =
+                "✅ Movie added successfully!";
+
+
+            message.style.display =
+                "block";
+
+
+            /* CLEAR FORM */
+
+            document
+                .getElementById("movieName")
+                .value = "";
+
+
+            document
+                .getElementById("movieGenre")
+                .value = "";
+
+
+            document
+                .getElementById("movieLanguage")
+                .value = "";
+
+
+            document
+                .getElementById("movieRating")
+                .value = "";
+
+
+            document
+                .getElementById("movieDescription")
+                .value = "";
+
+
+            /* REFRESH DASHBOARD */
+
+            setTimeout(
+                function() {
+
+                    location.reload();
+
+                },
+                1000
+            );
+
+
+        }
+
+        else {
+
+
+            errorMessage.innerText =
+                "❌ " +
+                (
+                    data.message ||
+                    "Unable to add movie."
+                );
+
+
+            errorMessage.style.display =
+                "block";
+
+
+            button.disabled =
+                false;
+
+
+            button.innerText =
+                "➕ Add Movie";
+
+        }
+
+
+    }
+
+    catch (error) {
+
+
+        console.error(error);
+
+
+        errorMessage.innerText =
+            "❌ Server error. Please check Flask.";
+
+        errorMessage.style.display =
+            "block";
+
+
+        button.disabled =
+            false;
+
+
+        button.innerText =
+            "➕ Add Movie";
+
+    }
+
+}
+
+
+</script>
+
+
+</body>
+
+</html>

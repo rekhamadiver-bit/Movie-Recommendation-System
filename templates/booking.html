@@ -1,0 +1,1757 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Book Movie Ticket</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+
+        body {
+            background: #f4f6f9;
+            font-family: Arial, sans-serif;
+        }
+
+        .booking-container {
+            width: 90%;
+            max-width: 900px;
+            margin: 30px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+
+        .booking-container h1 {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .movie-title {
+            text-align: center;
+            font-size: 25px;
+            font-weight: bold;
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .form-group select,
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+
+        .price-box {
+            background: #eef7ff;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .screen {
+            width: 70%;
+            margin: 30px auto 20px;
+            padding: 12px;
+            background: #333;
+            color: white;
+            text-align: center;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        /* =========================
+           SEAT AVAILABILITY
+        ========================= */
+
+        .seat-availability {
+            text-align: center;
+            padding: 15px;
+            margin: 20px 0;
+            background: #eef7ff;
+            color: #111;
+            border-radius: 10px;
+            font-size: 17px;
+            font-weight: bold;
+        }
+
+        .seat-availability.loading {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .seat-availability.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        /* =========================
+           SEATS
+        ========================= */
+
+        .seat-area {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .seat-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .row-label {
+            width: 25px;
+            font-weight: bold;
+        }
+
+        .seat {
+            width: 38px;
+            height: 38px;
+            border: none;
+            border-radius: 7px;
+            background: #ddd;
+            color: #111;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .seat:hover {
+            background: #bbb;
+        }
+
+        /* SELECTED = GREEN */
+
+        .seat.selected {
+            background: #28a745 !important;
+            color: white !important;
+        }
+
+        /* BOOKED = RED */
+
+        .seat.occupied,
+        .seat.booked {
+            background: #dc3545 !important;
+            color: white !important;
+            cursor: not-allowed !important;
+            opacity: 0.85;
+        }
+
+        .seat:disabled {
+            cursor: not-allowed;
+        }
+
+        /* =========================
+           LEGEND
+        ========================= */
+
+        .legend {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            margin: 25px 0;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+
+        .legend-box {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+
+        .available {
+            background: #ddd;
+        }
+
+        .selected-box {
+            background: #28a745;
+        }
+
+        .occupied-box {
+            background: #dc3545;
+        }
+
+        /* =========================
+           SUMMARY
+        ========================= */
+
+        .summary {
+            margin-top: 25px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .summary p {
+            font-size: 18px;
+            margin: 10px 0;
+        }
+
+        .total {
+            font-size: 24px !important;
+            font-weight: bold;
+        }
+
+        /* =========================
+           BUTTON
+        ========================= */
+
+        .book-btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 8px;
+            background: #007bff;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+
+        .book-btn:hover {
+            background: #0056b3;
+        }
+
+        .book-btn:disabled {
+            background: #999;
+            cursor: not-allowed;
+        }
+
+        .back-btn {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            text-decoration: none;
+            color: #007bff;
+            font-weight: bold;
+        }
+
+        #message {
+            text-align: center;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        @media(max-width:600px) {
+
+            .booking-container {
+                width: 95%;
+                padding: 15px;
+            }
+
+            .seat {
+                width: 30px;
+                height: 30px;
+                font-size: 11px;
+            }
+
+            .screen {
+                width: 90%;
+            }
+
+            .legend {
+                gap: 10px;
+                font-size: 13px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="booking-container">
+
+
+    <h1>
+        🎟️ Book Movie Ticket
+    </h1>
+
+
+    <!-- MOVIE -->
+
+    <div class="movie-title">
+
+        🎬 {{ movie.name }}
+
+    </div>
+
+
+    <!-- =========================
+         THEATRE
+    ========================= -->
+
+    <div class="form-group">
+
+        <label for="theatre">
+            🏢 Select Theatre
+        </label>
+
+        <select id="theatre">
+
+            <option value="">
+                -- Select Theatre --
+            </option>
+
+            <option value="PVR Cinemas">
+                PVR Cinemas
+            </option>
+
+            <option value="INOX">
+                INOX
+            </option>
+
+            <option value="Cinepolis">
+                Cinepolis
+            </option>
+
+            <option value="Galaxy Cinema">
+                Galaxy Cinema
+            </option>
+
+            <option value="City Mall Cinemas">
+                City Mall Cinemas
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <!-- =========================
+         DATE
+    ========================= -->
+
+    <div class="form-group">
+
+        <label for="booking_date">
+            📅 Select Date
+        </label>
+
+        <input
+            type="date"
+            id="booking_date"
+        >
+
+    </div>
+
+
+    <!-- =========================
+         SHOW TIME
+    ========================= -->
+
+    <div class="form-group">
+
+        <label for="show_time">
+            🕐 Select Show Time
+        </label>
+
+        <select id="show_time">
+
+            <option value="">
+                -- Select Show Time --
+            </option>
+
+            <option value="10:00 AM">
+                10:00 AM
+            </option>
+
+            <option value="01:30 PM">
+                01:30 PM
+            </option>
+
+            <option value="04:30 PM">
+                04:30 PM
+            </option>
+
+            <option value="07:30 PM">
+                07:30 PM
+            </option>
+
+            <option value="10:00 PM">
+                10:00 PM
+            </option>
+
+        </select>
+
+    </div>
+
+
+    <!-- =========================
+         PRICE
+    ========================= -->
+
+    <div class="price-box">
+
+        💰 Ticket Price:
+
+        ₹<span id="ticketPrice">180</span>
+
+        per seat
+
+    </div>
+
+
+    <!-- =========================
+         SCREEN
+    ========================= -->
+
+    <div class="screen">
+
+        🎬 SCREEN
+
+    </div>
+
+
+    <!-- =========================
+         AVAILABILITY
+    ========================= -->
+
+    <div
+        id="seatAvailability"
+        class="seat-availability">
+
+        🟢 Available: 40
+
+        &nbsp;&nbsp;&nbsp;
+
+        🔴 Booked: 0
+
+        &nbsp;&nbsp;&nbsp;
+
+        🟡 Selected: 0
+
+        &nbsp;&nbsp;&nbsp;
+
+        💺 Total: 40
+
+    </div>
+
+
+    <!-- =========================
+         SEATS
+    ========================= -->
+
+    <div
+        class="seat-area"
+        id="seatArea">
+
+    </div>
+
+
+    <!-- =========================
+         LEGEND
+    ========================= -->
+
+    <div class="legend">
+
+
+        <div class="legend-item">
+
+            <div class="legend-box available"></div>
+
+            Available
+
+        </div>
+
+
+        <div class="legend-item">
+
+            <div class="legend-box selected-box"></div>
+
+            Selected
+
+        </div>
+
+
+        <div class="legend-item">
+
+            <div class="legend-box occupied-box"></div>
+
+            Booked
+
+        </div>
+
+
+    </div>
+
+
+    <!-- =========================
+         SUMMARY
+    ========================= -->
+
+    <div class="summary">
+
+
+        <p>
+
+            🎟️ Selected Seats:
+
+            <span id="selectedSeats">
+                None
+            </span>
+
+        </p>
+
+
+        <p>
+
+            👥 Number of Seats:
+
+            <span id="seatCount">
+                0
+            </span>
+
+        </p>
+
+
+        <p class="total">
+
+            💰 Total:
+
+            ₹<span id="totalAmount">
+                0
+            </span>
+
+        </p>
+
+
+    </div>
+
+
+    <!-- =========================
+         BOOK BUTTON
+    ========================= -->
+
+    <button
+        type="button"
+        class="book-btn"
+        id="bookButton"
+        onclick="confirmBooking()">
+
+        🎟️ Confirm Booking
+
+    </button>
+
+
+    <div id="message"></div>
+
+
+    <!-- BACK -->
+
+    <a
+        href="{{ url_for('home') }}"
+        class="back-btn">
+
+        ← Back to Movies
+
+    </a>
+
+
+</div>
+
+
+<script>
+
+
+// ==================================================
+// BASIC SETTINGS
+// ==================================================
+
+const movieName =
+    {{ movie.name | tojson }};
+
+
+const ticketPrice = 180;
+
+
+const TOTAL_SEATS = 40;
+
+
+const ROWS =
+    ["A", "B", "C", "D", "E"];
+
+
+const SEATS_PER_ROW = 8;
+
+
+// ==================================================
+// ARRAYS
+// ==================================================
+
+let selectedSeats = [];
+
+
+let bookedSeats = [];
+
+
+// ==================================================
+// CREATE SEATS
+// ==================================================
+
+function createSeats() {
+
+
+    const seatArea =
+        document.getElementById(
+            "seatArea"
+        );
+
+
+    seatArea.innerHTML = "";
+
+
+    for (
+        let row of ROWS
+    ) {
+
+
+        const rowDiv =
+            document.createElement(
+                "div"
+            );
+
+
+        rowDiv.className =
+            "seat-row";
+
+
+        const label =
+            document.createElement(
+                "span"
+            );
+
+
+        label.className =
+            "row-label";
+
+
+        label.innerText =
+            row;
+
+
+        rowDiv.appendChild(
+            label
+        );
+
+
+        for (
+            let number = 1;
+            number <= SEATS_PER_ROW;
+            number++
+        ) {
+
+
+            const seatNumber =
+                row + number;
+
+
+            const button =
+                document.createElement(
+                    "button"
+                );
+
+
+            button.type =
+                "button";
+
+
+            button.className =
+                "seat";
+
+
+            button.innerText =
+                number;
+
+
+            button.dataset.seat =
+                seatNumber;
+
+
+            button.onclick =
+                function() {
+
+                    selectSeat(
+                        seatNumber
+                    );
+
+                };
+
+
+            rowDiv.appendChild(
+                button
+            );
+
+        }
+
+
+        seatArea.appendChild(
+            rowDiv
+        );
+
+    }
+
+
+    updateSeatDisplay();
+
+}
+
+
+// ==================================================
+// SELECT / UNSELECT SEAT
+// ==================================================
+
+function selectSeat(
+    seatNumber
+) {
+
+
+    // Already booked
+    if (
+        bookedSeats.includes(
+            seatNumber
+        )
+    ) {
+
+        return;
+
+    }
+
+
+    // Already selected
+    if (
+        selectedSeats.includes(
+            seatNumber
+        )
+    ) {
+
+
+        selectedSeats =
+            selectedSeats.filter(
+                function(seat) {
+
+                    return seat !==
+                        seatNumber;
+
+                }
+            );
+
+
+    }
+
+
+    // Select seat
+    else {
+
+
+        selectedSeats.push(
+            seatNumber
+        );
+
+    }
+
+
+    updateSeatDisplay();
+
+    updateSummary();
+
+    updateAvailabilityDisplay();
+
+}
+
+
+// ==================================================
+// UPDATE SEAT DISPLAY
+// ==================================================
+
+function updateSeatDisplay() {
+
+
+    document
+        .querySelectorAll(".seat")
+        .forEach(
+            function(button) {
+
+
+                const seatNumber =
+                    button.dataset.seat;
+
+
+                button.classList.remove(
+                    "selected",
+                    "occupied",
+                    "booked"
+                );
+
+
+                button.disabled =
+                    false;
+
+
+                // ==============================
+                // BOOKED = RED
+                // ==============================
+
+                if (
+                    bookedSeats.includes(
+                        seatNumber
+                    )
+                ) {
+
+
+                    button.classList.add(
+                        "occupied"
+                    );
+
+
+                    button.classList.add(
+                        "booked"
+                    );
+
+
+                    button.disabled =
+                        true;
+
+
+                    button.title =
+                        "Already booked";
+
+
+                }
+
+
+                // ==============================
+                // SELECTED = GREEN
+                // ==============================
+
+                else if (
+                    selectedSeats.includes(
+                        seatNumber
+                    )
+                ) {
+
+
+                    button.classList.add(
+                        "selected"
+                    );
+
+
+                    button.title =
+                        "Selected";
+
+
+                }
+
+
+                // ==============================
+                // AVAILABLE = GREY
+                // ==============================
+
+                else {
+
+
+                    button.title =
+                        "Available";
+
+                }
+
+            }
+        );
+
+}
+
+
+// ==================================================
+// UPDATE AVAILABILITY
+// ==================================================
+
+function updateAvailabilityDisplay() {
+
+
+    const availability =
+        document.getElementById(
+            "seatAvailability"
+        );
+
+
+    if (!availability) {
+
+        return;
+
+    }
+
+
+    const total =
+        TOTAL_SEATS;
+
+
+    const booked =
+        bookedSeats.length;
+
+
+    const selected =
+        selectedSeats.length;
+
+
+    const available =
+        Math.max(
+            0,
+            total -
+            booked -
+            selected
+        );
+
+
+    availability.innerHTML =
+
+        "🟢 Available: " +
+        available +
+
+        "&nbsp;&nbsp;&nbsp;" +
+
+        "🔴 Booked: " +
+        booked +
+
+        "&nbsp;&nbsp;&nbsp;" +
+
+        "🟡 Selected: " +
+        selected +
+
+        "&nbsp;&nbsp;&nbsp;" +
+
+        "💺 Total: " +
+        total;
+
+}
+
+
+// ==================================================
+// UPDATE SUMMARY
+// ==================================================
+
+function updateSummary() {
+
+
+    const seatCount =
+        document.getElementById(
+            "seatCount"
+        );
+
+
+    const selectedSeatsElement =
+        document.getElementById(
+            "selectedSeats"
+        );
+
+
+    const totalAmount =
+        document.getElementById(
+            "totalAmount"
+        );
+
+
+    seatCount.innerText =
+        selectedSeats.length;
+
+
+    selectedSeatsElement.innerText =
+
+        selectedSeats.length > 0
+
+        ? selectedSeats.join(
+            ", "
+        )
+
+        : "None";
+
+
+    const total =
+        selectedSeats.length *
+        ticketPrice;
+
+
+    totalAmount.innerText =
+        total;
+
+
+    updateAvailabilityDisplay();
+
+}
+
+
+// ==================================================
+// LOAD BOOKED SEATS FROM FLASK
+// ==================================================
+
+async function loadBookedSeats() {
+
+
+    const theatre =
+        document.getElementById(
+            "theatre"
+        ).value;
+
+
+    const bookingDate =
+        document.getElementById(
+            "booking_date"
+        ).value;
+
+
+    const showTime =
+        document.getElementById(
+            "show_time"
+        ).value;
+
+
+    const availability =
+        document.getElementById(
+            "seatAvailability"
+        );
+
+
+    // No complete booking information
+    if (
+        !theatre ||
+        !bookingDate ||
+        !showTime
+    ) {
+
+
+        bookedSeats = [];
+
+        selectedSeats = [];
+
+
+        updateSeatDisplay();
+
+        updateSummary();
+
+
+        return;
+
+    }
+
+
+    availability.className =
+        "seat-availability loading";
+
+
+    availability.innerHTML =
+        "🔄 Checking real-time seat availability...";
+
+
+    try {
+
+
+        const params =
+            new URLSearchParams({
+
+                movie_name:
+                    movieName,
+
+                theatre:
+                    theatre,
+
+                booking_date:
+                    bookingDate,
+
+                show_time:
+                    showTime
+
+            });
+
+
+        const response =
+            await fetch(
+                "/api/seats?" +
+                params.toString(),
+                {
+                    method: "GET",
+                    cache: "no-store"
+                }
+            );
+
+
+        if (!response.ok) {
+
+
+            throw new Error(
+                "Seat API HTTP " +
+                response.status
+            );
+
+        }
+
+
+        const data =
+            await response.json();
+
+
+        console.log(
+            "Seat availability:",
+            data
+        );
+
+
+        if (!data.success) {
+
+
+            throw new Error(
+                data.message ||
+                "Seat availability failed"
+            );
+
+        }
+
+
+        // ==============================
+        // GET BOOKED SEATS
+        // ==============================
+
+        bookedSeats =
+
+            (data.booked_seats || [])
+            .map(
+                function(seat) {
+
+                    return String(
+                        seat
+                    )
+                    .trim()
+                    .toUpperCase();
+
+                }
+            );
+
+
+        // Remove seats that became booked
+
+        selectedSeats =
+            selectedSeats.filter(
+                function(seat) {
+
+                    return !bookedSeats.includes(
+                        seat
+                    );
+
+                }
+            );
+
+
+        updateSeatDisplay();
+
+        updateSummary();
+
+
+        // ==============================
+        // CALCULATE COUNTS
+        // ==============================
+
+        const total =
+            Number(
+                data.total_seats ||
+                TOTAL_SEATS
+            );
+
+
+        const booked =
+            Number(
+                data.booked_count ??
+                bookedSeats.length
+            );
+
+
+        const selected =
+            selectedSeats.length;
+
+
+        const available =
+            Math.max(
+                0,
+                total -
+                booked -
+                selected
+            );
+
+
+        availability.className =
+            "seat-availability";
+
+
+        availability.innerHTML =
+
+            "🟢 Available: " +
+            available +
+
+            "&nbsp;&nbsp;&nbsp;" +
+
+            "🔴 Booked: " +
+            booked +
+
+            "&nbsp;&nbsp;&nbsp;" +
+
+            "🟡 Selected: " +
+            selected +
+
+            "&nbsp;&nbsp;&nbsp;" +
+
+            "💺 Total: " +
+            total;
+
+
+    }
+
+
+    catch (error) {
+
+
+        console.error(
+            "Seat availability error:",
+            error
+        );
+
+
+        availability.className =
+            "seat-availability error";
+
+
+        availability.innerHTML =
+            "❌ Unable to load seat availability";
+
+
+    }
+
+}
+
+
+// ==================================================
+// CONFIRM BOOKING
+// ==================================================
+
+async function confirmBooking() {
+
+
+    const theatre =
+        document.getElementById(
+            "theatre"
+        ).value;
+
+
+    const bookingDate =
+        document.getElementById(
+            "booking_date"
+        ).value;
+
+
+    const showTime =
+        document.getElementById(
+            "show_time"
+        ).value;
+
+
+    const message =
+        document.getElementById(
+            "message"
+        );
+
+
+    const button =
+        document.getElementById(
+            "bookButton"
+        );
+
+
+    message.innerText = "";
+
+
+    // ==============================
+    // VALIDATION
+    // ==============================
+
+    if (!theatre) {
+
+
+        message.style.color =
+            "red";
+
+
+        message.innerText =
+            "Please select a theatre.";
+
+
+        return;
+
+    }
+
+
+    if (!bookingDate) {
+
+
+        message.style.color =
+            "red";
+
+
+        message.innerText =
+            "Please select a booking date.";
+
+
+        return;
+
+    }
+
+
+    if (!showTime) {
+
+
+        message.style.color =
+            "red";
+
+
+        message.innerText =
+            "Please select show time.";
+
+
+        return;
+
+    }
+
+
+    if (
+        selectedSeats.length === 0
+    ) {
+
+
+        message.style.color =
+            "red";
+
+
+        message.innerText =
+            "Please select at least one seat.";
+
+
+        return;
+
+    }
+
+
+    // ==============================
+    // FINAL AVAILABILITY CHECK
+    // ==============================
+
+    await loadBookedSeats();
+
+
+    const conflicts =
+        selectedSeats.filter(
+            function(seat) {
+
+                return bookedSeats.includes(
+                    seat
+                );
+
+            }
+        );
+
+
+    if (
+        conflicts.length > 0
+    ) {
+
+
+        selectedSeats = [];
+
+
+        updateSeatDisplay();
+
+        updateSummary();
+
+
+        message.style.color =
+            "red";
+
+
+        message.innerText =
+            "❌ Already booked: " +
+            conflicts.join(", ");
+
+
+        return;
+
+    }
+
+
+    const total =
+        selectedSeats.length *
+        ticketPrice;
+
+
+    button.disabled =
+        true;
+
+
+    button.innerText =
+        "⏳ Booking...";
+
+
+    try {
+
+
+        const response =
+            await fetch(
+                "/api/book",
+                {
+
+                    method: "POST",
+
+                    headers: {
+
+                        "Content-Type":
+                            "application/json"
+
+                    },
+
+                    body:
+                        JSON.stringify({
+
+                            movie_name:
+                                movieName,
+
+                            theatre:
+                                theatre,
+
+                            booking_date:
+                                bookingDate,
+
+                            show_time:
+                                showTime,
+
+                            seats:
+                                selectedSeats,
+
+                            quantity:
+                                selectedSeats.length,
+
+                            price:
+                                ticketPrice,
+
+                            total:
+                                total
+
+                        })
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        console.log(
+            "Booking response:",
+            data
+        );
+
+
+        // ==============================
+        // SEAT CONFLICT
+        // ==============================
+
+        if (
+            response.status === 409
+        ) {
+
+
+            await loadBookedSeats();
+
+
+            message.style.color =
+                "red";
+
+
+            message.innerText =
+                "❌ " +
+                (
+                    data.message ||
+                    "One or more seats are already booked."
+                );
+
+
+            return;
+
+        }
+
+
+        // ==============================
+        // OTHER ERROR
+        // ==============================
+
+        if (
+            !response.ok ||
+            !data.success
+        ) {
+
+
+            throw new Error(
+                data.message ||
+                data.error ||
+                "Booking failed."
+            );
+
+        }
+
+
+        // ==============================
+        // SUCCESS
+        // ==============================
+
+        message.style.color =
+            "green";
+
+
+        message.innerText =
+            "✅ Ticket booked successfully!";
+
+
+        setTimeout(
+            function() {
+
+                window.location.href =
+                    "/ticket/" +
+                    data.booking_id;
+
+            },
+            800
+        );
+
+
+    }
+
+
+    catch (error) {
+
+
+        console.error(
+            "BOOKING ERROR:",
+            error
+        );
+
+
+        message.style.color =
+            "red";
+
+
+        message.innerText =
+            "❌ " +
+            (
+                error.message ||
+                "Booking failed."
+            );
+
+    }
+
+
+    finally {
+
+
+        button.disabled =
+            false;
+
+
+        button.innerText =
+            "🎟️ Confirm Booking";
+
+    }
+
+}
+
+
+// ==================================================
+// SET MINIMUM DATE
+// ==================================================
+
+function setMinimumDate() {
+
+
+    const dateInput =
+        document.getElementById(
+            "booking_date"
+        );
+
+
+    if (!dateInput) {
+
+        return;
+
+    }
+
+
+    const today =
+        new Date();
+
+
+    const year =
+        today.getFullYear();
+
+
+    const month =
+        String(
+            today.getMonth() + 1
+        ).padStart(
+            2,
+            "0"
+        );
+
+
+    const day =
+        String(
+            today.getDate()
+        ).padStart(
+            2,
+            "0"
+        );
+
+
+    dateInput.min =
+        year +
+        "-" +
+        month +
+        "-" +
+        day;
+
+}
+
+
+// ==================================================
+// PAGE LOAD
+// ==================================================
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function() {
+
+
+        console.log(
+            "Booking page loaded"
+        );
+
+
+        console.log(
+            "Movie:",
+            movieName
+        );
+
+
+        createSeats();
+
+
+        setMinimumDate();
+
+
+        updateSummary();
+
+
+        // ==============================
+        // THEATRE CHANGE
+        // ==============================
+
+        document
+            .getElementById(
+                "theatre"
+            )
+            .addEventListener(
+                "change",
+                function() {
+
+                    selectedSeats = [];
+
+                    loadBookedSeats();
+
+                }
+            );
+
+
+        // ==============================
+        // DATE CHANGE
+        // ==============================
+
+        document
+            .getElementById(
+                "booking_date"
+            )
+            .addEventListener(
+                "change",
+                function() {
+
+                    selectedSeats = [];
+
+                    loadBookedSeats();
+
+                }
+            );
+
+
+        // ==============================
+        // SHOW TIME CHANGE
+        // ==============================
+
+        document
+            .getElementById(
+                "show_time"
+            )
+            .addEventListener(
+                "change",
+                function() {
+
+                    selectedSeats = [];
+
+                    loadBookedSeats();
+
+                }
+            );
+
+    }
+);
+
+</script>
+
+
+</body>
+
+</html>

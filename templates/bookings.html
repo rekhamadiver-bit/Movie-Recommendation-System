@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>My Bookings - MovieAI</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+
+        /* =====================================================
+           BODY
+        ===================================================== */
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #0b1020;
+            color: white;
+        }
+
+
+        /* =====================================================
+           HEADER
+        ===================================================== */
+
+        .booking-header {
+            padding: 25px;
+            text-align: center;
+            background: #11182d;
+        }
+
+        .booking-header h1 {
+            margin: 0;
+            font-size: 32px;
+        }
+
+        .booking-header p {
+            color: #aaa;
+            margin-top: 8px;
+        }
+
+
+        /* =====================================================
+           MAIN CONTAINER
+        ===================================================== */
+
+        .booking-container {
+            width: 90%;
+            max-width: 1100px;
+            margin: 40px auto;
+        }
+
+
+        /* =====================================================
+           SUCCESS / ERROR MESSAGE
+        ===================================================== */
+
+        #message {
+            display: none;
+
+            padding: 15px;
+
+            margin-bottom: 20px;
+
+            border-radius: 8px;
+
+            text-align: center;
+
+            font-weight: bold;
+        }
+
+
+        .success-message {
+            background: #198754;
+            color: white;
+        }
+
+
+        .error-message {
+            background: #dc3545;
+            color: white;
+        }
+
+
+        /* =====================================================
+           BOOKING CARD
+        ===================================================== */
+
+        .booking-card {
+            background: #151d35;
+
+            border-radius: 15px;
+
+            padding: 25px;
+
+            margin-bottom: 25px;
+
+            box-shadow:
+                0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+
+        .booking-card h2 {
+            margin-top: 0;
+
+            margin-bottom: 20px;
+
+            color: white;
+        }
+
+
+        /* =====================================================
+           BOOKING INFORMATION
+        ===================================================== */
+
+        .booking-info {
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(2, 1fr);
+
+            gap: 12px;
+
+            margin: 20px 0;
+        }
+
+
+        .info-box {
+
+            background: #0e1528;
+
+            padding: 12px;
+
+            border-radius: 8px;
+        }
+
+
+        .info-box strong {
+
+            display: block;
+
+            color: #aaa;
+
+            font-size: 13px;
+
+            margin-bottom: 5px;
+        }
+
+
+        .booking-code {
+
+            font-size: 20px;
+
+            font-weight: bold;
+
+            color: #ffffff;
+        }
+
+
+        .booking-price {
+
+            font-size: 22px;
+
+            font-weight: bold;
+
+            color: #2ed573;
+        }
+
+
+        /* =====================================================
+           BUTTON CONTAINER
+        ===================================================== */
+
+        .button-area {
+
+            display: flex;
+
+            gap: 12px;
+
+            flex-wrap: wrap;
+
+            margin-top: 20px;
+        }
+
+
+        /* =====================================================
+           DIGITAL TICKET BUTTON
+        ===================================================== */
+
+        .ticket-btn {
+
+            display: inline-block;
+
+            padding: 12px 20px;
+
+            background: #3742fa;
+
+            color: white;
+
+            text-decoration: none;
+
+            border-radius: 8px;
+
+            font-weight: bold;
+
+            border: none;
+
+            cursor: pointer;
+        }
+
+
+        .ticket-btn:hover {
+
+            background: #5352ed;
+        }
+
+
+        /* =====================================================
+           CANCEL BUTTON
+        ===================================================== */
+
+        .cancel-btn {
+
+            padding: 12px 20px;
+
+            background: #dc3545;
+
+            color: white;
+
+            border: none;
+
+            border-radius: 8px;
+
+            font-size: 15px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            transition: 0.2s;
+        }
+
+
+        .cancel-btn:hover {
+
+            background: #b02a37;
+
+            transform: translateY(-1px);
+        }
+
+
+        .cancel-btn:disabled {
+
+            background: #555;
+
+            cursor: not-allowed;
+
+            transform: none;
+        }
+
+
+        /* =====================================================
+           CONFIRMED STATUS
+        ===================================================== */
+
+        .confirmed-status {
+
+            display: inline-block;
+
+            margin-top: 10px;
+
+            padding: 7px 12px;
+
+            border-radius: 20px;
+
+            background: #143d2b;
+
+            color: #2ed573;
+
+            font-size: 14px;
+
+            font-weight: bold;
+        }
+
+
+        /* =====================================================
+           CANCELLED STATUS
+        ===================================================== */
+
+        .cancelled-status {
+
+            display: inline-block;
+
+            margin-top: 10px;
+
+            padding: 7px 12px;
+
+            border-radius: 20px;
+
+            background: #451b20;
+
+            color: #ff4757;
+
+            font-size: 14px;
+
+            font-weight: bold;
+        }
+
+
+        /* =====================================================
+           EMPTY BOOKINGS
+        ===================================================== */
+
+        .empty {
+
+            text-align: center;
+
+            background: #151d35;
+
+            padding: 50px;
+
+            border-radius: 15px;
+        }
+
+
+        .empty h2 {
+
+            margin-top: 0;
+        }
+
+
+        .home-btn {
+
+            display: inline-block;
+
+            margin-top: 20px;
+
+            padding: 12px 20px;
+
+            background: #3742fa;
+
+            color: white;
+
+            text-decoration: none;
+
+            border-radius: 8px;
+
+            font-weight: bold;
+        }
+
+
+        .home-btn:hover {
+
+            background: #5352ed;
+        }
+
+
+        /* =====================================================
+           MOBILE
+        ===================================================== */
+
+        @media (max-width: 700px) {
+
+            .booking-info {
+
+                grid-template-columns: 1fr;
+            }
+
+
+            .button-area {
+
+                flex-direction: column;
+            }
+
+
+            .ticket-btn,
+            .cancel-btn {
+
+                width: 100%;
+
+                box-sizing: border-box;
+
+                text-align: center;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     HEADER
+========================================================= -->
+
+<div class="booking-header">
+
+    <h1>🎟️ My Bookings</h1>
+
+    <p>
+        View your movie tickets and booking details
+    </p>
+
+</div>
+
+
+<!-- =========================================================
+     MAIN CONTAINER
+========================================================= -->
+
+<div class="booking-container">
+
+
+    <!-- =====================================================
+         MESSAGE
+    ====================================================== -->
+
+    <div id="message"></div>
+
+
+    <!-- =====================================================
+         CHECK BOOKINGS
+    ====================================================== -->
+
+    {% if bookings %}
+
+
+        <!-- =================================================
+             LOOP BOOKINGS
+        ================================================== -->
+
+        {% for booking in bookings %}
+
+
+        <div class="booking-card"
+             id="booking-card-{{ booking.id }}">
+
+
+            <!-- =============================================
+                 MOVIE NAME
+            ============================================== -->
+
+            <h2>
+
+                🎬 {{ booking.movie_name }}
+
+            </h2>
+
+
+            <!-- =============================================
+                 BOOKING INFORMATION
+            ============================================== -->
+
+            <div class="booking-info">
+
+
+                <!-- BOOKING ID -->
+
+                <div class="info-box">
+
+                    <strong>
+                        Booking ID
+                    </strong>
+
+                    <span class="booking-code">
+
+                        {{ booking.booking_code }}
+
+                    </span>
+
+                </div>
+
+
+                <!-- THEATRE -->
+
+                <div class="info-box">
+
+                    <strong>
+                        Theatre
+                    </strong>
+
+                    {{ booking.theatre }}
+
+                </div>
+
+
+                <!-- DATE -->
+
+                <div class="info-box">
+
+                    <strong>
+                        Date
+                    </strong>
+
+                    {{ booking.booking_date }}
+
+                </div>
+
+
+                <!-- SHOW TIME -->
+
+                <div class="info-box">
+
+                    <strong>
+                        Show Time
+                    </strong>
+
+                    {{ booking.show_time }}
+
+                </div>
+
+
+                <!-- SEATS -->
+
+                <div class="info-box">
+
+                    <strong>
+                        Seats
+                    </strong>
+
+                    {{ booking.seats }}
+
+                </div>
+
+
+                <!-- TICKETS -->
+
+                <div class="info-box">
+
+                    <strong>
+                        Tickets
+                    </strong>
+
+                    {{ booking.quantity }}
+
+                </div>
+
+
+                <!-- PRICE -->
+
+                <div class="info-box">
+
+                    <strong>
+                        Price / Seat
+                    </strong>
+
+                    ₹{{ booking.price }}
+
+                </div>
+
+
+                <!-- TOTAL -->
+
+                <div class="info-box">
+
+                    <strong>
+                        Total Amount
+                    </strong>
+
+                    <span class="booking-price">
+
+                        ₹{{ booking.total }}
+
+                    </span>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- =================================================
+                 BOOKING STATUS
+            ================================================== -->
+
+            {% if booking.status is defined and booking.status == "Cancelled" %}
+
+
+                <!-- CANCELLED -->
+
+                <div class="cancelled-status">
+
+                    ❌ Ticket Cancelled
+
+                </div>
+
+
+            {% else %}
+
+
+                <!-- CONFIRMED -->
+
+                <div class="confirmed-status">
+
+                    ✅ Booking Confirmed
+
+                </div>
+
+
+                <!-- =============================================
+                     BUTTONS
+                ============================================== -->
+
+                <div class="button-area">
+
+
+                    <!-- DIGITAL TICKET -->
+
+                    <a
+                        class="ticket-btn"
+                        href="{{ url_for(
+                            'ticket_page',
+                            booking_id=booking.id
+                        ) }}"
+                    >
+
+                        🎫 View Digital Ticket
+
+                    </a>
+
+
+                    <!-- CANCEL -->
+
+                    <button
+                        type="button"
+                        class="cancel-btn"
+                        id="cancel-btn-{{ booking.id }}"
+                        onclick="cancelBooking({{ booking.id }})"
+                    >
+
+                        ❌ Cancel Ticket
+
+                    </button>
+
+
+                </div>
+
+
+            {% endif %}
+
+
+        </div>
+
+
+        {% endfor %}
+
+
+    <!-- =====================================================
+         NO BOOKINGS
+    ====================================================== -->
+
+    {% else %}
+
+
+        <div class="empty">
+
+
+            <h2>
+
+                🎟️ No Bookings Yet
+
+            </h2>
+
+
+            <p>
+
+                You have not booked any movie tickets.
+
+            </p>
+
+
+            <a
+                href="{{ url_for('home') }}"
+                class="home-btn"
+            >
+
+                🎬 Browse Movies
+
+            </a>
+
+
+        </div>
+
+
+    {% endif %}
+
+
+</div>
+
+
+<!-- =========================================================
+     JAVASCRIPT
+========================================================= -->
+
+<script>
+
+
+/* =========================================================
+   SHOW MESSAGE
+========================================================= */
+
+function showMessage(message, type) {
+
+    const messageBox =
+        document.getElementById("message");
+
+
+    messageBox.innerText =
+        message;
+
+
+    messageBox.className =
+        type === "success"
+        ? "success-message"
+        : "error-message";
+
+
+    messageBox.style.display =
+        "block";
+
+
+    setTimeout(function () {
+
+        messageBox.style.display =
+            "none";
+
+    }, 4000);
+
+}
+
+
+/* =========================================================
+   CANCEL BOOKING
+========================================================= */
+
+async function cancelBooking(bookingId) {
+
+
+    /* -----------------------------------------------------
+       CONFIRMATION
+    ----------------------------------------------------- */
+
+    const confirmCancel = confirm(
+
+        "Are you sure you want to cancel this ticket?\n\n" +
+
+        "Booking ID: " + bookingId + "\n\n" +
+
+        "The selected seats will become available again."
+
+    );
+
+
+    if (!confirmCancel) {
+
+        return;
+
+    }
+
+
+    /* -----------------------------------------------------
+       GET BUTTON
+    ----------------------------------------------------- */
+
+    const cancelButton =
+        document.getElementById(
+            "cancel-btn-" + bookingId
+        );
+
+
+    if (cancelButton) {
+
+        cancelButton.disabled = true;
+
+        cancelButton.innerText =
+            "Cancelling...";
+
+    }
+
+
+    try {
+
+
+        /* -------------------------------------------------
+           SEND DELETE REQUEST
+        ------------------------------------------------- */
+
+        const response = await fetch(
+
+            "/api/booking/" +
+            bookingId +
+            "/cancel",
+
+            {
+                method: "DELETE",
+
+                headers: {
+
+                    "Content-Type":
+                        "application/json"
+
+                }
+
+            }
+
+        );
+
+
+        /* -------------------------------------------------
+           READ RESPONSE
+        ------------------------------------------------- */
+
+        const result =
+            await response.json();
+
+
+        /* -------------------------------------------------
+           SUCCESS
+        ------------------------------------------------- */
+
+        if (
+            response.ok &&
+            result.success
+        ) {
+
+
+            showMessage(
+
+                "✅ Ticket cancelled successfully! " +
+                "The seats are now available again.",
+
+                "success"
+
+            );
+
+
+            /* ---------------------------------------------
+               Remove booking card after short delay
+            ---------------------------------------------- */
+
+            const bookingCard =
+                document.getElementById(
+                    "booking-card-" + bookingId
+                );
+
+
+            if (bookingCard) {
+
+
+                bookingCard.style.transition =
+                    "0.4s";
+
+
+                bookingCard.style.opacity =
+                    "0.5";
+
+
+                bookingCard.style.transform =
+                    "scale(0.98)";
+
+
+                setTimeout(function () {
+
+                    location.reload();
+
+                }, 1000);
+
+            }
+            else {
+
+                location.reload();
+
+            }
+
+
+        }
+
+
+        /* -------------------------------------------------
+           ERROR
+        ------------------------------------------------- */
+
+        else {
+
+
+            showMessage(
+
+                "❌ " +
+                (
+                    result.message ||
+                    "Unable to cancel ticket."
+                ),
+
+                "error"
+
+            );
+
+
+            if (cancelButton) {
+
+                cancelButton.disabled =
+                    false;
+
+                cancelButton.innerText =
+                    "❌ Cancel Ticket";
+
+            }
+
+        }
+
+
+    }
+
+
+    /* -----------------------------------------------------
+       SERVER / NETWORK ERROR
+    ----------------------------------------------------- */
+
+    catch (error) {
+
+
+        console.error(
+            "Cancel booking error:",
+            error
+        );
+
+
+        showMessage(
+
+            "❌ Server error. Please try again.",
+
+            "error"
+
+        );
+
+
+        if (cancelButton) {
+
+            cancelButton.disabled =
+                false;
+
+            cancelButton.innerText =
+                "❌ Cancel Ticket";
+
+        }
+
+    }
+
+}
+
+
+</script>
+
+
+</body>
+
+</html>

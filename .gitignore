@@ -1,0 +1,8 @@
+movie_booking.db
+Movie_Recommendation_systems.zip
+__pycache__/
+*.pyc
+.venv/
+venv/
+.idea/
+.env
