@@ -229,3 +229,24 @@ SQLite is used to store:
 - HTML/CSS/JavaScript
 - CRUD Operations
 - User Authentication
+
+- 
+- ## 📸 Screenshots
+
+### 🏠 Home Page
+![Home Page](screenshots/home.png)
+
+### 🔐 Login Page
+![Login Page](screenshots/login.png)
+
+### 🤖 AI Recommendation
+![AI Recommendation](screenshots/recommendation.png)
+
+### 🎟️ Ticket Booking
+![Ticket Booking](screenshots/booking.png)
+
+### 🎫 Digital Ticket
+![Digital Ticket](screenshots/ticket.png)
+
+### 👨‍💼 Admin Dashboard
+![Admin Dashboard](screenshots/dashboard.png)
